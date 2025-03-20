@@ -19,8 +19,14 @@ def decode_file_name(url_safe_file_name: str) -> str:
     return base64.urlsafe_b64decode(url_safe_file_name).decode()
 
 
-def handle_file_encryption(key: bytes, fileName: str) -> None:
-    input_data = load_data(fileName)
+def encode_file(key: bytes, file_name: str) -> None:
+    input_data = load_data(file_name)
     encrypted_data = encrypt_input(key, input_data)
-    encrypted_file_name = encode_file_name(fileName)
+    encrypted_file_name = encode_file_name(file_name)
     save_data(encrypted_file_name, encrypted_data)
+
+def decode_file(key: bytes, encrypted_file_name: str) -> None:
+    encrypted_data = load_data(encrypted_file_name)
+    decrypted_data = decrypt_input(key, encrypted_data)
+    decrypted_file_name = decode_file_name(encrypted_file_name)
+    save_data(decrypted_file_name, decrypted_data)
