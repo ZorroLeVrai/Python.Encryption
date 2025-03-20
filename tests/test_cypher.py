@@ -1,5 +1,4 @@
 import pytest
-import base64
 import encryption.cypher as cypher
 
 def test_encrypt_decrypt_generate_same_data():
