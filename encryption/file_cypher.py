@@ -2,6 +2,7 @@
 import base64
 from .cypher import decrypt_input, encrypt_input
 from .file import load_data, save_data
+from typing import Tuple
 
 
 def encode_file_name(file_name: str) -> str:
@@ -18,15 +19,20 @@ def decode_file_name(url_safe_file_name: str) -> str:
     # Decode the filename-safe Base 64 string
     return base64.urlsafe_b64decode(url_safe_file_name).decode()
 
+class FileEnconding:
+    def __init__(self, key: bytes):
+        self.key = key
 
-def encode_file(key: bytes, file_name: str) -> None:
-    input_data = load_data(file_name)
-    encrypted_data = encrypt_input(key, input_data)
-    encrypted_file_name = encode_file_name(file_name)
-    save_data(encrypted_file_name, encrypted_data)
+    def encode_file(self, file_name: str) -> Tuple[str, bytes]:
+        input_data = load_data(file_name)
+        encrypted_data = encrypt_input(self.key, input_data)
+        encrypted_file_name = encode_file_name(file_name)
+        save_data(encrypted_file_name, encrypted_data)
+        return encrypted_file_name, encrypted_data
 
-def decode_file(key: bytes, encrypted_file_name: str) -> None:
-    encrypted_data = load_data(encrypted_file_name)
-    decrypted_data = decrypt_input(key, encrypted_data)
-    decrypted_file_name = decode_file_name(encrypted_file_name)
-    save_data(decrypted_file_name, decrypted_data)
+    def decode_file(self, encrypted_file_name: str) -> Tuple[str, bytes]:
+        encrypted_data = load_data(encrypted_file_name)
+        decrypted_data = decrypt_input(self.key, encrypted_data)
+        decrypted_file_name = decode_file_name(encrypted_file_name)
+        save_data(decrypted_file_name, decrypted_data)
+        return decrypted_file_name, decrypted_data

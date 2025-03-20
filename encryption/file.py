@@ -1,7 +1,19 @@
-def save_data(fileName: str, data: bytes) -> None:
-    with open(fileName, 'wb') as file:
+import hashlib
+
+def save_data(file_name: str, data: bytes) -> None:
+    with open(file_name, 'wb') as file:
         file.write(data)
 
-def load_data(fileName: str) -> bytes:
-    with open(fileName, 'rb') as file:
+def load_data(file_name: str) -> bytes:
+    with open(file_name, 'rb') as file:
         return file.read()
+    
+def file_hash(file_name: str) -> str:
+    hasher = hashlib.sha256()  # You can also use md5(), sha1(), etc.
+    with open(file_name, "rb") as file:
+        for chunk in iter(lambda: file.read(4096), b""):  # Read in chunks
+            hasher.update(chunk)
+    return hasher.hexdigest()
+
+def are_identical_files(file_name1: str, file_name2: str) -> bool:
+    return file_hash(file_name1) == file_hash(file_name2)
