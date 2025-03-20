@@ -1,3 +1,4 @@
+import base64
 from cryptography.fernet import Fernet
 
 def generate_encryption_key() -> bytes:
@@ -5,6 +6,18 @@ def generate_encryption_key() -> bytes:
     Generate a new encryption key
     """
     return Fernet.generate_key()
+
+
+def generate_personal_key(custom_key: str) -> bytes:
+    """
+    Generate a personal key
+    """
+    length = len(custom_key)
+    if length < 32:
+        custom_key = custom_key.rjust(32)
+    elif length > 32:
+        custom_key = custom_key[:32]
+    return base64.urlsafe_b64encode(custom_key.encode())
 
 
 def handle_encryption(key: bytes, input: bytes, encrypt: bool) -> bytes:
