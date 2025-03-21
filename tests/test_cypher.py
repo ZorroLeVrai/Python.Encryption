@@ -2,23 +2,27 @@ import pytest
 import encryption.cypher as cypher
 
 def test_encrypt_decrypt_generate_same_data():
-    key = cypher.generate_encryption_key()
+    key = cypher.KeyGenerator().generate_key()
     input_data = b"Hello, World!"
-    encrypted_data = cypher.encrypt_input(key, input_data)
-    decrypted_data = cypher.decrypt_input(key, encrypted_data)
+    data_encoder = cypher.DataFernetEncoder(key)
+    encrypted_data = data_encoder.encode(input_data)
+    decrypted_data = data_encoder.decode(encrypted_data)
     assert input_data == decrypted_data
 
 def test_encrypt_decrypt_with_custom_key():
-    key = cypher.generate_personal_key("This is a key")
+    key = cypher.KeyGenerator("This is a key").generate_key()
     input_data = b"Hello, World!"
-    encrypted_data = cypher.encrypt_input(key, input_data)
-    decrypted_data = cypher.decrypt_input(key, encrypted_data)
+    data_encoder = cypher.DataFernetEncoder(key)
+    encrypted_data = data_encoder.encode(input_data)
+    decrypted_data = data_encoder.decode(encrypted_data)
     assert input_data == decrypted_data
 
 def test_encrypt_decrypt_with_invalid_key():
-    key = cypher.generate_personal_key("This is a key")
+    key = cypher.KeyGenerator("This is a key").generate_key()
     input_data = b"Hello, World!"
-    encrypted_data = cypher.encrypt_input(key, input_data)
-    invalid_key = key = cypher.generate_personal_key("Invalid key")
+    data_encoder = cypher.DataFernetEncoder(key)
+    encrypted_data = data_encoder.encode(input_data)
+    invalid_key = cypher.KeyGenerator("Invalid key").generate_key()
+    data_encoder = cypher.DataFernetEncoder(invalid_key)
     with pytest.raises(Exception):
-        cypher.decrypt_input(invalid_key, encrypted_data)
+        data_encoder.decode(encrypted_data)
