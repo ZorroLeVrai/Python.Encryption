@@ -11,6 +11,9 @@ def load_data(file_name: str) -> bytes:
     
 def rename(path_src: str, path_dst: str) -> None:
     os.rename(path_src, path_dst)
+
+def mkdir(path: str) -> None:
+    os.mkdir(path)
     
 def generate_file_hash(file_name: str) -> str:
     hasher = hashlib.sha256()  # You can also use md5(), sha1(), etc.
