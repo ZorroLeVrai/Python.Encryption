@@ -1,4 +1,5 @@
 import hashlib
+import os
 
 def save_data(file_name: str, data: bytes) -> None:
     with open(file_name, 'wb') as file:
@@ -7,6 +8,9 @@ def save_data(file_name: str, data: bytes) -> None:
 def load_data(file_name: str) -> bytes:
     with open(file_name, 'rb') as file:
         return file.read()
+    
+def rename(path_src: str, path_dst: str) -> None:
+    os.rename(path_src, path_dst)
     
 def generate_file_hash(file_name: str) -> str:
     hasher = hashlib.sha256()  # You can also use md5(), sha1(), etc.

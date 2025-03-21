@@ -24,3 +24,12 @@ def test_file_encrypt_decrypt_generate_same_data(encrypt_file: bool) -> None:
         assert input_data == decrypted_data
         assert file_name == decrypted_file_name
         assert encrypted_file_name != file_name
+
+def test_only_directory_encrypt_decrypt_generate_same_data() -> None:
+    with patch("encryption.file_encoder.rename") as mock_rename:
+        key = KeyGenerator().generate_key()
+        full_path = "C:/Users/Teckel Plus/Pictures"
+        encoded_full_path = file_encoder.FileEncoder.encode_only_directory(full_path)
+        decoded_full_path = file_encoder.FileEncoder.decode_only_directory(encoded_full_path)
+        assert full_path == decoded_full_path
+        assert encoded_full_path != full_path
