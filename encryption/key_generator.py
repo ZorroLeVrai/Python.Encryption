@@ -41,7 +41,7 @@ class KeyFileGenerator:
         self.key_generator = KeyGenerator(custom_key)
 
 
-    def create_key_file(self) -> bytes:
+    def generate(self) -> bytes:
         """
         Create a key file
         """
@@ -50,7 +50,7 @@ class KeyFileGenerator:
             file.write(key)
         return key
 
-    def load_key_file(self) -> bytes:
+    def load(self) -> bytes:
         """
         Load a key file
         """

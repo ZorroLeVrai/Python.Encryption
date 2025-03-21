@@ -3,7 +3,7 @@ from encryption.key_generator import KeyGenerator
 import encryption.file_encoder as file_encoder
 from unittest.mock import patch
 
-def test_file_name_encrypt_decrypt_generate_same_name():
+def test_file_name_encrypt_decrypt_generate_same_name() -> None:
     file_name = "Hello world.jpg"
     file_name_encoder = file_encoder.FileNameEncoder()
     encoded_file_name = file_name_encoder.encode(file_name)
@@ -11,7 +11,7 @@ def test_file_name_encrypt_decrypt_generate_same_name():
     assert file_name == decoded_file_name
 
 @pytest.mark.parametrize("encrypt_file", [True, False])
-def test_file_encrypt_decrypt_generate_same_data(encrypt_file: bool):
+def test_file_encrypt_decrypt_generate_same_data(encrypt_file: bool) -> None:
     with patch("encryption.file_encoder.load_data") as mock_load_data, \
         patch("encryption.file_encoder.save_data") as mock_save_data:
         key = KeyGenerator().generate_key()
