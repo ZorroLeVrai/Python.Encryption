@@ -1,5 +1,5 @@
-from encryption.cypher import create_key_file, load_key_file
-from encryption.file_cypher import FileEncoder
+from encryption.encoders import create_key_file, load_key_file
+from encryption.file_encoder import FileEncoder
 
 
 # key = load_key_file()

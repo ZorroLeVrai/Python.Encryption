@@ -1,5 +1,5 @@
 
-from .cypher import DataBase64Encoder, DataFernetEncoder
+from .encoders import DataBase64Encoder, DataFernetEncoder
 from .file import load_data, save_data
 from typing import Tuple, Optional
 
