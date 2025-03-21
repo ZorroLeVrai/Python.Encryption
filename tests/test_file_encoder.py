@@ -2,6 +2,7 @@ import pytest
 from encryption.key_generator import KeyGenerator
 import encryption.file_encoder as file_encoder
 from unittest.mock import patch
+import os
 
 def test_file_name_encrypt_decrypt_generate_same_name() -> None:
     file_name = "Hello world.jpg"
@@ -27,8 +28,8 @@ def test_file_encrypt_decrypt_generate_same_data(encrypt_file: bool) -> None:
 
 def test_only_directory_encrypt_decrypt_generate_same_data() -> None:
     with patch("encryption.file_encoder.rename") as mock_rename:
-        key = KeyGenerator().generate_key()
-        full_path = "C:/Users/Teckel Plus/Pictures"
+        #full_path = "C:\Users\Teckel Plus\Pictures"
+        full_path = os.path.join("C:", "Users", "Teckel Plus", "Pictures")
         encoded_full_path = file_encoder.FileEncoder.encode_only_directory(full_path)
         decoded_full_path = file_encoder.FileEncoder.decode_only_directory(encoded_full_path)
         assert full_path == decoded_full_path
