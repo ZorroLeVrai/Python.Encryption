@@ -8,7 +8,7 @@ def load_data(file_name: str) -> bytes:
     with open(file_name, 'rb') as file:
         return file.read()
     
-def file_hash(file_name: str) -> str:
+def generate_file_hash(file_name: str) -> str:
     hasher = hashlib.sha256()  # You can also use md5(), sha1(), etc.
     with open(file_name, "rb") as file:
         for chunk in iter(lambda: file.read(4096), b""):  # Read in chunks
@@ -16,4 +16,4 @@ def file_hash(file_name: str) -> str:
     return hasher.hexdigest()
 
 def are_identical_files(file_name1: str, file_name2: str) -> bool:
-    return file_hash(file_name1) == file_hash(file_name2)
+    return generate_file_hash(file_name1) == generate_file_hash(file_name2)
