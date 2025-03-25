@@ -1,19 +1,25 @@
 import hashlib
+from pathlib import Path
 import os
 
-def save_data(file_name: str, data: bytes) -> None:
-    with open(file_name, 'wb') as file:
+def save_data(file_name: str | Path, data: bytes) -> None:
+    file_name_str = str(file_name) if isinstance(file_name, Path) else file_name
+    with open(file_name_str, 'wb') as file:
         file.write(data)
 
-def load_data(file_name: str) -> bytes:
-    with open(file_name, 'rb') as file:
+def load_data(file_name: str | Path) -> bytes:
+    file_name_str = str(file_name) if isinstance(file_name, Path) else file_name
+    with open(file_name_str, 'rb') as file:
         return file.read()
-    
-def rename(path_src: str, path_dst: str) -> None:
-    os.rename(path_src, path_dst)
 
-def mkdir(path: str) -> None:
-    os.mkdir(path)
+def rename(path_src: str | Path, path_dst: str | Path) -> None:
+    path_src_str = str(path_src) if isinstance(path_src, Path) else path_src
+    path_dst_str = str(path_dst) if isinstance(path_dst, Path) else path_dst
+    os.rename(path_src_str, path_dst_str)
+
+def mkdir(path: str | Path) -> None:
+    path_str = str(path) if isinstance(path, Path) else path
+    os.mkdir(path_str)
     
 def generate_file_hash(file_name: str) -> str:
     hasher = hashlib.sha256()  # You can also use md5(), sha1(), etc.

@@ -1,5 +1,4 @@
 
-from encryption.file_path import DirectoryPathBuilder, DirectoryPath
 from .encoders import DataBase64Encoder, DataEncoder, DataFernetEncoder
 from .file import load_data, mkdir, save_data
 from typing import Tuple, Optional
@@ -40,23 +39,24 @@ class FileEncoder:
         # Replace the last "." with ".old."
         return f"{parts[0]}.{post_fix}.{parts[1]}"
     
-    def encode_file(self, src_file_path: str, dst_path: str) -> Tuple[str, bytes]:
+    def encode_file(self, src_path: Path, dst_path: Path) -> Tuple[Path, bytes]:
         """
         Encodes a given file
         Args:
-            src_file_path: The path to the file to encode
+            src_path: The path to the file to encode
             dst_path: The path to the directory to save the encoded file
         Returns:
             The name of the encoded file and the encoded data
         """
-        src_data = load_data(src_file_path)
+        src_path_basename = src_path.name
+        src_data = load_data(src_path)
         dst_data = self.encoder.encode(src_data)
-        dst_file_name = self.file_name_encoder.encode(os.path.basename(src_file_path))
-        dst_full_path = os.path.join(dst_path, dst_file_name)
+        dst_file_name = self.file_name_encoder.encode(src_path_basename)
+        dst_full_path = dst_path.joinpath(dst_file_name)
         save_data(dst_full_path, dst_data)
         return dst_full_path, dst_data
 
-    def decode_file(self, src_file_path: str, dst_path: str, post_fix: str = "") -> Tuple[str, bytes]:
+    def decode_file(self, src_path: Path, dst_path: Path, post_fix: str = "") -> Tuple[Path, bytes]:
         """
         Decodes a given file
         Args:
@@ -65,45 +65,43 @@ class FileEncoder:
         Returns:
             The name of the decoded file and the decoded data
         """
-        src_data = load_data(src_file_path)
+        src_data = load_data(src_path)
         dst_data = self.encoder.decode(src_data)
-        dst_file_name = self.file_name_encoder.decode(os.path.basename(src_file_path))
-        dst_full_path = os.path.join(dst_path, dst_file_name)
+        dst_file_name = self.file_name_encoder.decode(src_path.name)
+        dst_full_path = os.path.join(str(dst_path), dst_file_name)
         if post_fix:
             dst_full_path = self.replace_last_dot(dst_file_name, post_fix)
         save_data(dst_full_path, dst_data)
-        return dst_full_path, dst_data
+        return Path(dst_full_path), dst_data
     
     @staticmethod
-    def encode_only_directory(src_path: str, dst_path: str) -> str:
+    def encode_only_directory(src_path: Path, dst_path: Path) -> Path:
         """
         Encodes only the directory name
         Args:
-            src_directory_name: The name of the directory to encode
+            src_path: The name of the directory to encode
             dst_path: The path to the directory to save the encoded directory
         """
-        src_directory_name = os.path.basename(src_path)
+        src_directory_name = src_path.name
         dst_directory_name = FileNameEncoder().encode(src_directory_name)
 
-        dst_full_path = os.path.join(dst_path, dst_directory_name)
-        #rename(src_path, dst_full_path)
+        dst_full_path = dst_path.joinpath(dst_directory_name)
         mkdir(dst_full_path)
         return dst_full_path
 
     @staticmethod
-    def decode_only_directory(src_path: str, dst_path: str, post_fix: str = "") -> str:
+    def decode_only_directory(src_path: Path, dst_path: Path, post_fix: str = "") -> Path:
         """
         Decodes only the directory name
         Args:
             directory_path: The path to the directory to decode
             post_fix: The post-fix to add to the decoded directory name
         """
-        src_directory_name = os.path.basename(src_path)
+        src_directory_name = src_path.name
         dst_directory_name = FileNameEncoder().decode(src_directory_name)
         if post_fix:
             dst_directory_name += f".{post_fix}"
-        dst_full_path = os.path.join(dst_path, dst_directory_name)
-        #rename(src_path, dst_full_path)
+        dst_full_path = dst_path.joinpath(dst_directory_name)
         mkdir(dst_full_path)
         return dst_full_path
     
@@ -122,7 +120,7 @@ class FileEncoder:
         #self.encode_directory_internal(src_full_path, src_full_path.parent)
 
     def encode_directory_internal(self, src_directory_path: Path, dst_directory_path: Path) -> None:
-        dst_path = Path(self.encode_only_directory(src_directory_path, dst_directory_path))
+        dst_path = self.encode_only_directory(src_directory_path, dst_directory_path)
 
         directories = [path for path in src_directory_path.iterdir() if path.is_dir()]
         files = [path for path in src_directory_path.iterdir() if path.is_file()]

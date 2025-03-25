@@ -2,6 +2,7 @@ import pytest
 from encryption.key_generator import KeyGenerator
 import encryption.file_encoder as file_encoder
 from unittest.mock import patch
+from pathlib import Path
 import os
 
 def test_file_name_encrypt_decrypt_generate_same_name() -> None:
@@ -17,12 +18,12 @@ def test_file_encrypt_decrypt_generate_same_data(encrypt_file: bool) -> None:
         patch("encryption.file_encoder.save_data") as mock_save_data:
         key = KeyGenerator().generate_key()
         dst_path = os.path.join("Users", "Microsoft", "Repo")
-        src_full_path = "Hello world.jpg"
+        src_full_path = Path("Hello world.jpg")
         input_data = b"Hello, World!"
         mock_load_data.return_value = input_data
-        encrypted_full_path, encrypted_data = file_encoder.FileEncoder(encrypt_file, key).encode_file(src_full_path, dst_path)
+        encrypted_full_path, encrypted_data = file_encoder.FileEncoder(encrypt_file, key).encode_file(Path(src_full_path), Path(dst_path))
         mock_load_data.return_value = encrypted_data
-        decrypted_file_name, decrypted_data = file_encoder.FileEncoder(encrypt_file, key).decode_file(encrypted_full_path, "")
+        decrypted_file_name, decrypted_data = file_encoder.FileEncoder(encrypt_file, key).decode_file(Path(encrypted_full_path), Path(""))
         assert input_data == decrypted_data
         assert src_full_path == decrypted_file_name
         assert encrypted_full_path != src_full_path
@@ -30,9 +31,9 @@ def test_file_encrypt_decrypt_generate_same_data(encrypt_file: bool) -> None:
 def test_only_directory_encrypt_decrypt_generate_same_data() -> None:
     with patch("encryption.file_encoder.mkdir") as mock_mkdir:
         #full_path = r"Users\Teckel Plus\Pictures"
-        full_path = os.path.join("Users", "Teckel Plus", "Pictures")
-        dst_path = r"Temp"
+        full_path = Path(os.path.join("Users", "Teckel Plus", "Pictures"))
+        dst_path = Path("Temp")
         encoded_full_path = file_encoder.FileEncoder.encode_only_directory(full_path, dst_path)
-        decoded_full_path = file_encoder.FileEncoder.decode_only_directory(encoded_full_path, os.path.dirname(full_path))
+        decoded_full_path = file_encoder.FileEncoder.decode_only_directory(encoded_full_path, full_path.parent)
         assert full_path == decoded_full_path
         assert encoded_full_path != full_path

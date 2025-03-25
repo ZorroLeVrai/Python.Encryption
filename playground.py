@@ -1,4 +1,3 @@
-from encryption import file_encoder
 from encryption.file_encoder import FileEncoder
 from encryption.key_generator import KeyFileGenerator
 from datetime import datetime
@@ -16,11 +15,14 @@ from datetime import datetime
 # print("Decoded file name:", decoded_file_name)
 
 
-file_encoder = FileEncoder(True, KeyFileGenerator().generate())
-print("Start encoding at:", datetime.now())
+file_encoder = FileEncoder(False, KeyFileGenerator().generate())
+before = datetime.now()
 file_encoder.encode_directory(r"E:\Users\Amine\Extended Area\Old_Documents2")
-print("End encoding at:", datetime.now())
+after = datetime.now()
+print("Time to encode:", after - before)
 
-print("Start decoding at:", datetime.now())
+before = datetime.now()
 file_encoder.decode_directory(r"E:\Users\Amine\Extended Area\Old_Documents2.cry")
-print("End decoding at:", datetime.now())
+after = datetime.now()
+print("Time to decode:", after - before)
+
