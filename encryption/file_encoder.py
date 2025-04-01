@@ -106,6 +106,11 @@ class FileEncoder:
         return dst_full_path
     
     def encode_directory(self, src_path_str: str) -> None:
+        """
+        Encodes a directory and its contents recursively
+        Args:
+            src_path_str: The path to the directory to encode
+        """
         src_full_path = Path(src_path_str)
         dst_directory_name = f"{src_full_path.name}.cry"
         dst_directory_path = src_full_path.parent.joinpath(dst_directory_name)
@@ -120,6 +125,12 @@ class FileEncoder:
         #self.encode_directory_internal(src_full_path, src_full_path.parent)
 
     def encode_directory_internal(self, src_directory_path: Path, dst_directory_path: Path) -> None:
+        """
+        Encodes a directory and its contents recursively
+        Args:
+            src_directory_path: The path to the directory to encode
+            dst_directory_path: The path to the directory to save the encoded files
+        """
         dst_path = self.encode_only_directory(src_directory_path, dst_directory_path)
 
         directories = [path for path in src_directory_path.iterdir() if path.is_dir()]
@@ -133,6 +144,11 @@ class FileEncoder:
 
 
     def decode_directory(self, src_path_str: str) -> None:
+        """
+        Decodes a directory and its contents recursively
+        Args:
+            src_path_str: The path to the directory to decode
+        """
         src_full_path = Path(src_path_str)
         dst_directory_name = f"{src_full_path.name}.dec"
         dst_directory_path = src_full_path.parent.joinpath(dst_directory_name)
@@ -145,6 +161,12 @@ class FileEncoder:
                 self.decode_file(item, dst_directory_path)
 
     def decode_directory_internal(self, src_directory_path: Path, dst_directory_path: Path) -> None:
+        """
+        Decodes a directory and its contents recursively
+        Args:
+            src_directory_path: The path to the directory to decode
+            dst_directory_path: The path to the directory to save the decoded files
+        """
         dst_path = Path(self.decode_only_directory(src_directory_path, dst_directory_path))
 
         directories = [path for path in src_directory_path.iterdir() if path.is_dir()]
