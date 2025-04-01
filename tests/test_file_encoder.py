@@ -44,9 +44,7 @@ def test_directory_encrypt_decrypt_generate_same_data() -> None:
         path = Path(file_path)
         if not path.exists():
             return False
-        assert path.is_file()
-        assert path.read_bytes() == expected_contents
-        return True
+        return path.is_file() and path.read_bytes() == expected_contents
     
 
     with Patcher() as patcher:
@@ -66,11 +64,19 @@ def test_directory_encrypt_decrypt_generate_same_data() -> None:
 
         encoder = file_encoder.FileEncoder(False, KeyFileGenerator().generate())
         encoder.encode_directory("Test")
+        # Check that the encoded directory structure is correct
+        assert fs.exists("Test.cry")
+        # Sub directory names should be encoded
+        assert not fs.exists("Test.cry/Files")
+        assert not fs.exists("Test.cry/Teckel Plus")
+
         encoder.decode_directory("Test.cry")
+        #Check that the decoded directory structure is correct
         assert fs.exists("Test.cry.dec")
         assert fs.exists("Test.cry.dec/Files")
         assert fs.exists("Test.cry.dec/Teckel Plus")
 
+        # Check that the files are correctly decrypted
         assert check_file_contains("Test.cry.dec/Files/file1.txt", b"Content of file 1")
         assert check_file_contains("Test.cry.dec/Files/file2.txt", b"Content of file 2")
         assert check_file_contains("Test.cry.dec/Files/file3.txt", b"Content of file 3")
