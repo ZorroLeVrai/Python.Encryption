@@ -175,3 +175,6 @@ cython_debug/
 
 #remove music
 audio/*.wav
+
+#remove key
+key.txt

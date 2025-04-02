@@ -5,6 +5,8 @@ from typing import Tuple, Optional
 from pathlib import Path
 import os
 
+from encryption import file
+
 class FileNameEncoder:
     def __init__(self) -> None:
         self.encoder = DataBase64Encoder(True)
@@ -105,13 +107,16 @@ class FileEncoder:
         mkdir(dst_full_path)
         return dst_full_path
     
-    def encode_directory(self, src_path_str: str) -> None:
+    def encode_directory(self, src_path_str: str) -> Path:
         """
         Encodes a directory and its contents recursively
         Args:
             src_path_str: The path to the directory to encode
         """
         src_full_path = Path(src_path_str)
+        if not src_full_path.exists():
+            raise FileNotFoundError(f"Source path does not exist: {src_path_str}")
+        
         dst_directory_name = f"{src_full_path.name}.cry"
         dst_directory_path = src_full_path.parent.joinpath(dst_directory_name)
         os.mkdir(dst_directory_path)
@@ -121,8 +126,8 @@ class FileEncoder:
                 self.encode_directory_internal(item, dst_directory_path)
             else:
                 self.encode_file(item, dst_directory_path)
-
-        #self.encode_directory_internal(src_full_path, src_full_path.parent)
+        
+        return dst_directory_path
 
     def encode_directory_internal(self, src_directory_path: Path, dst_directory_path: Path) -> None:
         """
@@ -143,14 +148,21 @@ class FileEncoder:
             self.encode_file(file, dst_path)
 
 
-    def decode_directory(self, src_path_str: str) -> None:
+    def decode_directory(self, src_path_str: str) -> Path:
         """
         Decodes a directory and its contents recursively
         Args:
             src_path_str: The path to the directory to decode
         """
         src_full_path = Path(src_path_str)
-        dst_directory_name = f"{src_full_path.name}.dec"
+        if not src_full_path.exists():
+            raise FileNotFoundError(f"Source path does not exist: {src_path_str}")
+        
+        scr_dir_name = src_full_path.name
+        if scr_dir_name.endswith(".cry") and not os.path.isdir(src_path_str[:-4]):
+            dst_directory_name = scr_dir_name[:-4]
+        else:
+            dst_directory_name = f"{src_full_path.name}.dec"
         dst_directory_path = src_full_path.parent.joinpath(dst_directory_name)
         os.mkdir(dst_directory_path)
 
@@ -159,6 +171,8 @@ class FileEncoder:
                 self.decode_directory_internal(item, dst_directory_path)
             else:
                 self.decode_file(item, dst_directory_path)
+
+        return dst_directory_path
 
     def decode_directory_internal(self, src_directory_path: Path, dst_directory_path: Path) -> None:
         """

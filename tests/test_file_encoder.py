@@ -49,6 +49,9 @@ def test_directory_encrypt_decrypt_generate_same_data() -> None:
 
     with Patcher() as patcher:
         fs = patcher.fs
+        if fs is None:
+            raise ValueError("File system is not initialized")
+
         # Mock the file system
         fs.create_dir("/Test")
         fs.create_dir("/Test/Files")
@@ -72,14 +75,14 @@ def test_directory_encrypt_decrypt_generate_same_data() -> None:
 
         encoder.decode_directory("Test.cry")
         #Check that the decoded directory structure is correct
-        assert fs.exists("Test.cry.dec")
-        assert fs.exists("Test.cry.dec/Files")
-        assert fs.exists("Test.cry.dec/Teckel Plus")
+        assert fs.exists("Test")
+        assert fs.exists("Test/Files")
+        assert fs.exists("Test/Teckel Plus")
 
         # Check that the files are correctly decrypted
-        assert check_file_contains("Test.cry.dec/Files/file1.txt", b"Content of file 1")
-        assert check_file_contains("Test.cry.dec/Files/file2.txt", b"Content of file 2")
-        assert check_file_contains("Test.cry.dec/Files/file3.txt", b"Content of file 3")
-        assert check_file_contains("Test.cry.dec/file4.txt", b"Content of file 4")
-        assert check_file_contains("Test.cry.dec/file5.txt", b"Content of file 5")
-        assert check_file_contains("Test.cry.dec/Teckel Plus/file6.txt", b"My Content of file 6")
+        assert check_file_contains("Test/Files/file1.txt", b"Content of file 1")
+        assert check_file_contains("Test/Files/file2.txt", b"Content of file 2")
+        assert check_file_contains("Test/Files/file3.txt", b"Content of file 3")
+        assert check_file_contains("Test/file4.txt", b"Content of file 4")
+        assert check_file_contains("Test/file5.txt", b"Content of file 5")
+        assert check_file_contains("Test/Teckel Plus/file6.txt", b"My Content of file 6")
